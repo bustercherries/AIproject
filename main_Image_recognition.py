@@ -9,9 +9,9 @@ plt.rcParams['figure.figsize'] = [20, 10]
 
 print(tf.__version__)
 
-train_dir = "C:\\Users\\rosie\\github repos\\AIproject\\Zdjecia_podzielone_recznie\\train"
-validation_dir = "C:\\Users\\rosie\\github repos\\AIproject\\Zdjecia_podzielone_recznie\\validation"
-test_dir = "C:\\Users\\rosie\\github repos\\AIproject\\Zdjecia_podzielone_recznie\\test"
+train_dir = "C:\\Users\\rosie\\github repos\\AIproject\\main_dataset\\train"
+validation_dir = "C:\\Users\\rosie\\github repos\\AIproject\\main_dataset\\validation"
+test_dir = "C:\\Users\\rosie\\github repos\\AIproject\\main_dataset\\test"
 
 train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
     rescale = 1 / 255
