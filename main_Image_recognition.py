@@ -9,9 +9,9 @@ plt.rcParams['figure.figsize'] = [20, 10]
 
 print(tf.__version__)
 
-train_dir = "C:\\Users\\rober\\Desktop\\Projekt_zwierzeta\\TestJeleni\\train\\"
-validation_dir = "C:\\Users\\rober\\Desktop\\Projekt_zwierzeta\\TestJeleni\\validation\\"
-test_dir = "C:\\Users\\rober\\Desktop\\Projekt_zwierzeta\\TestJeleni\\test\\"
+train_dir = "C:\\Users\\rosie\\github repos\\AIproject\\Zdjecia_podzielone_recznie\\train"
+validation_dir = "C:\\Users\\rosie\\github repos\\AIproject\\Zdjecia_podzielone_recznie\\validation"
+test_dir = "C:\\Users\\rosie\\github repos\\AIproject\\Zdjecia_podzielone_recznie\\test"
 
 train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
     rescale = 1 / 255
@@ -37,15 +37,6 @@ validation_flow = validation_datagen.flow_from_directory(
   class_mode = "categorical"
 )
 
-#show images examples
-"""
-sample_batch = train_flow.next()
-for i in range(0, 4):
-    img = sample_batch[0][i, :, : , :]
-    plt.matshow(img)
-plt.show()
-"""
-
 sample_batch = train_flow.next()
 
 
@@ -68,16 +59,16 @@ outputs = tf.keras.layers.Flatten()(outputs)
 outputs = tf.keras.layers.Dense(units = 256, activation = "relu")(outputs)
 outputs = tf.keras.layers.Dense(units = 3, activation = "softmax")(outputs)
 
-alien_predator_model_2 = tf.keras.Model(inputs, outputs)
+animals_model = tf.keras.Model(inputs, outputs)
 
-alien_predator_model_2.compile(
+animals_model.compile(
     optimizer = tf.keras.optimizers.RMSprop(learning_rate = 1e-5),
     loss = "categorical_crossentropy",
     metrics = ("accuracy"))
 
-alien_predator_model_2.summary()
+animals_model.summary()
 
-history = alien_predator_model_2.fit(
+history = animals_model.fit(
         train_flow,
         steps_per_epoch=22, # ceiling(694 / 32)
         epochs=15,
@@ -104,4 +95,4 @@ test_flow = train_datagen.flow_from_directory(
   class_mode = "categorical" # Classification task
 )
 
-alien_predator_model_2.evaluate(test_flow, steps = 18)
+animals_model.evaluate(test_flow, steps = 18)
