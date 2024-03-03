@@ -1,39 +1,38 @@
-import pandas as pd
 import tensorflow as tf
-import numpy as np
-import random
-import os
-import scipy
 from matplotlib import pyplot as plt
+import os
 plt.rcParams['figure.figsize'] = [20, 10]
 
-print(tf.__version__)
+# względna ścieżka do projektu
+project_path = os.path.dirname(os.path.abspath(__file__))
+# Dołączanie folderu do ścieżki projektu
+all_dir = os.path.join(project_path, 'images dataset')
+test_dir = os.path.join(project_path, 'extracted_frames_10')
 
-train_dir = "C:\\Users\\rosie\\github repos\\AIproject\\main_dataset\\train"
-validation_dir = "C:\\Users\\rosie\\github repos\\AIproject\\main_dataset\\validation"
-test_dir = "C:\\Users\\rosie\\github repos\\AIproject\\main_dataset\\test"
+resolution = 200
+our_batch_size = 32
+classes_no = 3
 
-train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
-    rescale = 1 / 255
-)
-validation_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
-    rescale = 1 / 255
-)
+#rozbicie zbioru danych na treningowy i validacyjny
+train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1/255,
+    shear_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True,
+    validation_split=0.2) # set validation split
 
-resolution = 300
 train_flow = train_datagen.flow_from_directory(
-  directory = train_dir, # Path for train images folder
+  directory = all_dir, # Path for images folder
   color_mode = "rgb", # Images are in color
-  target_size = (resolution, resolution), # Scale all images to 150x150
-  batch_size = 32, # Batch size
+  target_size = (resolution, resolution), # Scale all images to given resolution
+  batch_size = our_batch_size, # Batch size
   class_mode = "categorical" # Classification task
 )
 
-validation_flow = validation_datagen.flow_from_directory(
-  directory = validation_dir,
+validation_flow = train_datagen.flow_from_directory(
+  directory = all_dir,
   color_mode = "rgb",
   target_size = (resolution, resolution),
-  batch_size = 32,
+  batch_size = our_batch_size,
   class_mode = "categorical"
 )
 
@@ -43,7 +42,7 @@ sample_batch = train_flow.next()
 conv_base = tf.keras.applications.vgg16.VGG16(
   weights = "imagenet", # Weights trained on 'imagenet'
   include_top = False, # Without dense layers on top - we will add them later
-  input_shape = (resolution, resolution, 3) # Same shape as in our generators
+  input_shape = (resolution, resolution, classes_no) # Same shape as in our generators
 )
 
 conv_base.summary()
@@ -91,7 +90,7 @@ test_flow = train_datagen.flow_from_directory(
   directory = test_dir, # Path for train images folder
   color_mode = "rgb", # Images are in color
   target_size = (resolution, resolution), # Scale all images to 150x150
-  batch_size = 32, # Batch size
+  batch_size = our_batch_size, # Batch size
   class_mode = "categorical" # Classification task
 )
 
