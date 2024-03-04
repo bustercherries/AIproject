@@ -26,6 +26,6 @@ def extract_frames(video_path, output_folder):
     cap.release()
     print(f"Frames extracted: {frame_count}")
 
-video_path = r"C:\Users\rosie\github repos\AIproject\videos\Sarny.mp4" 
-output_folder = "extracted_frames_10\sarny" 
+video_path = r"C:\Users\rosie\github repos\AIproject\2.extracted_frames_10\wilk2_3.mp4" 
+output_folder = "2.extracted_frames_10\wolves" 
 extract_frames(video_path, output_folder)
