@@ -6,15 +6,16 @@ plt.rcParams['figure.figsize'] = [20, 10]
 # relative path to the project
 project_path = os.path.dirname(os.path.abspath(__file__))
 # Appending folder names to the project path
-all_dir = os.path.join(project_path, 'images dataset')
+all_dir = os.path.join(project_path, 'train_and_val')
 test_dir = os.path.join(project_path, 'extracted_frames_10')
 
-resolution = 200
+resolution_y = 180
+resolution_x = 320
 our_batch_size = 32
 classes_no = 3
-epochs_no = 20
+epochs_no = 5
 continue_learning = 0 #if 1 it starts learning from previously trained model
-trained_model_filename = "models/animals_best2.hdf5"
+trained_model_filename = "models/animals_best.hdf5"
 
 #rozbicie zbioru danych na treningowy i validacyjny
 train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1/255,
@@ -26,7 +27,7 @@ train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1/255,
 train_flow = train_datagen.flow_from_directory(
   directory = all_dir, # Path for images folder
   color_mode = "rgb", # Images are in color
-  target_size = (resolution, resolution), # Scale all images to given resolution
+  target_size = (resolution_y, resolution_x), # Scale all images to given resolution
   batch_size = our_batch_size, # Batch size
   class_mode = "categorical" # Classification task
 )
@@ -34,7 +35,7 @@ train_flow = train_datagen.flow_from_directory(
 validation_flow = train_datagen.flow_from_directory(
   directory = all_dir,
   color_mode = "rgb",
-  target_size = (resolution, resolution),
+  target_size = (resolution_y, resolution_x),
   batch_size = our_batch_size,
   class_mode = "categorical"
 )
@@ -42,7 +43,7 @@ validation_flow = train_datagen.flow_from_directory(
 conv_base = tf.keras.applications.vgg16.VGG16(
   weights = "imagenet", # Weights trained on 'imagenet'
   include_top = False, # Without dense layers on top - we will add them later
-  input_shape = (resolution, resolution, classes_no) # Same shape as in our generators
+  input_shape = (resolution_y, resolution_x, classes_no) # Same shape as in our generators
 )
 
 conv_base.summary()
@@ -52,7 +53,7 @@ for l in range(1, 7):
 conv_base.summary()
 
 
-inputs = tf.keras.Input(shape=(resolution, resolution, 3))
+inputs = tf.keras.Input(shape=(resolution_y, resolution_x, 3))
 outputs = conv_base(inputs, training=False)
 outputs = tf.keras.layers.Flatten()(outputs)
 outputs = tf.keras.layers.Dense(units = 256, activation = "relu")(outputs)
@@ -101,7 +102,7 @@ test_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
 test_flow = train_datagen.flow_from_directory(
   directory = test_dir, # Path for train images folder
   color_mode = "rgb", # Images are in color
-  target_size = (resolution, resolution), # Scale all images to 150x150
+  target_size = (resolution_y, resolution_x), # Scale all images to 150x150
   batch_size = our_batch_size, # Batch size
   class_mode = "categorical" # Classification task
 )

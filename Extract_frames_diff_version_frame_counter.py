@@ -1,7 +1,7 @@
 import cv2
 import os
 
-def extract_frames(video_path, output_folder):
+def extract_frames(video_path, output_folder, file_name):
     cap = cv2.VideoCapture(video_path)
     
     if not cap.isOpened():
@@ -19,13 +19,19 @@ def extract_frames(video_path, output_folder):
         
         # Only save every 10th frame
         if frame_count % 10 == 0:
-            frame_path = os.path.join(output_folder, f"frame_{frame_count}.jpg")
+            frame_path = os.path.join(output_folder, f"{file_name}_frame_{frame_count}.jpg")
             cv2.imwrite(frame_path, frame)
         
         frame_count += 1
     cap.release()
     print(f"Frames extracted: {frame_count}")
 
-video_path = r"C:\Users\rosie\github repos\AIproject\videos\Sarny.mp4" 
-output_folder = "extracted_frames_10\sarny" 
-extract_frames(video_path, output_folder)
+def extract_frames_list(folder_path, output_folder):
+    video_paths = [os.path.join(folder_path, file) for file in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, file))]
+    for idx, video_path in enumerate(video_paths):
+        name = f"Video_{idx+1}"
+        extract_frames(video_path, output_folder, name)
+
+folder_path = 'Filmy_Z_Youtube\wilki'
+output_folder = "Klatki_Z_Youtube\wilki"
+extract_frames_list(folder_path, output_folder)
