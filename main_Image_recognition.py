@@ -7,16 +7,16 @@ plt.rcParams['figure.figsize'] = [20, 10]
 project_path = os.path.dirname(os.path.abspath(__file__))
 # Appending folder names to the project path
 all_dir = os.path.join(project_path, 'train_and_val')
-test_dir = os.path.join(project_path, 'folder testowy')
+test_dir = os.path.join(project_path, 'Test dataset')
 
-resolution_y = 90
-resolution_x = 160
+resolution_y = 150
+resolution_x = 150
 our_batch_size = 32
 classes_no = 3
-epochs_no = 1
-continue_learning = 1 #if 1 it starts learning from previously trained model
-trained_model_filename = "models/animals_best_e15.hdf5"
-#testflow jakos inaczej?
+epochs_no = 15
+continue_learning = 0 #if 1 it starts learning from previously trained model
+trained_model_filename = "models/animals_best_resnet_e15_res150.hdf5"
+
 
 #splitting the data to train and validation
 train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1/255,
@@ -41,7 +41,14 @@ validation_flow = train_datagen.flow_from_directory(
   class_mode = "categorical"
 )
 
+"""#vgg16
 conv_base = tf.keras.applications.vgg16.VGG16(
+  weights = "imagenet", # Weights trained on 'imagenet'
+  include_top = False, # Without dense layers on top - we will add them later
+  input_shape = (resolution_y, resolution_x, classes_no) # Same shape as in our generators
+)"""
+#resnet
+conv_base = tf.keras.applications.ResNet50(
   weights = "imagenet", # Weights trained on 'imagenet'
   include_top = False, # Without dense layers on top - we will add them later
   input_shape = (resolution_y, resolution_x, classes_no) # Same shape as in our generators
@@ -106,6 +113,5 @@ test_flow = test_datagen.flow_from_directory(
   batch_size = our_batch_size, # Batch size
   class_mode = "categorical" # Classification task
 )
-print (test_flow.n)
-print(test_flow.batch_size)
+
 animals_model.evaluate(test_flow, steps = test_flow.n // test_flow.batch_size)
