@@ -19,7 +19,7 @@ def extract_frames(video_path, output_folder, file_name):
         
         # Only save every 10th frame
         if frame_count % 10 == 0:
-            frame_path = os.path.join(output_folder, f"{file_name}_frame_{frame_count}.jpg")
+            frame_path = os.path.join(output_folder, f"Jelen_{file_name}_frame_{frame_count}.jpg")
             cv2.imwrite(frame_path, frame)
         
         frame_count += 1
@@ -32,6 +32,6 @@ def extract_frames_list(folder_path, output_folder):
         name = f"Video_{idx+1}"
         extract_frames(video_path, output_folder, name)
 
-folder_path = 'Filmy_Z_Youtube\wilki'
-output_folder = "Klatki_Z_Youtube\wilki"
+folder_path = 'Filmy_Z_Youtube\jelenie_test'
+output_folder = "Klatki_Z_Youtube\jelenie_test"
 extract_frames_list(folder_path, output_folder)

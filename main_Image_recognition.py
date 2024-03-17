@@ -7,17 +7,18 @@ plt.rcParams['figure.figsize'] = [20, 10]
 project_path = os.path.dirname(os.path.abspath(__file__))
 # Appending folder names to the project path
 all_dir = os.path.join(project_path, 'train_and_val')
-test_dir = os.path.join(project_path, 'extracted_frames_10')
+test_dir = os.path.join(project_path, 'folder testowy')
 
-resolution_y = 180
-resolution_x = 320
+resolution_y = 90
+resolution_x = 160
 our_batch_size = 32
 classes_no = 3
-epochs_no = 5
-continue_learning = 0 #if 1 it starts learning from previously trained model
-trained_model_filename = "models/animals_best.hdf5"
+epochs_no = 1
+continue_learning = 1 #if 1 it starts learning from previously trained model
+trained_model_filename = "models/animals_best_e15.hdf5"
+#testflow jakos inaczej?
 
-#rozbicie zbioru danych na treningowy i validacyjny
+#splitting the data to train and validation
 train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1/255,
     shear_range=0.2,
     zoom_range=0.2,
@@ -85,7 +86,6 @@ history = animals_model.fit(
              tf.keras.callbacks.ModelCheckpoint(filepath= trained_model_filename,
                                                 monitor="accuracy", save_best_only=True)])
 
-#history.save('models/animalsKeras.keras')
 
 plt.plot(history.history['accuracy'])
 plt.plot(history.history['val_accuracy'])
@@ -99,12 +99,13 @@ test_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
     rescale = 1 / 255
 )
 
-test_flow = train_datagen.flow_from_directory(
-  directory = test_dir, # Path for train images folder
+test_flow = test_datagen.flow_from_directory(
+  directory = test_dir, # Path for test images folder
   color_mode = "rgb", # Images are in color
   target_size = (resolution_y, resolution_x), # Scale all images to 150x150
   batch_size = our_batch_size, # Batch size
   class_mode = "categorical" # Classification task
 )
-
-animals_model.evaluate(test_flow, steps = 18)
+print (test_flow.n)
+print(test_flow.batch_size)
+animals_model.evaluate(test_flow, steps = test_flow.n // test_flow.batch_size)

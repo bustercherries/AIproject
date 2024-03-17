@@ -20,15 +20,15 @@ def download_videos_from_list(urls, output_folder):
 
 # Lista URL do pobrania
 urls_to_download = [
-    'https://www.youtube.com/watch?v=OlcNU-Pyf6Y',
-    'https://www.youtube.com/watch?v=h5oBwMb-Q5w',
-    'https://www.youtube.com/watch?v=WnGRCFbvLCs',
-    'https://www.youtube.com/watch?v=5EQAJ705py8',
-    'https://www.youtube.com/watch?v=slfTpkf89pw',
-    'https://www.youtube.com/watch?v=lI_ZxHd1LzM',
-    'https://www.youtube.com/watch?v=qlHJZyIE7Ok'
+    'https://www.youtube.com/watch?v=CS_WfdNij80',
+    'https://www.youtube.com/watch?v=ftDgSC04zA4',
+    'https://www.youtube.com/watch?v=3IpXOuoh26Q',
+    'https://www.youtube.com/watch?v=fsgqP6eKugU',
+    'https://www.youtube.com/watch?v=hbbNCJHEomg',
+    'https://www.youtube.com/watch?v=ks1BUdskI2E',
+    'https://www.youtube.com/watch?v=m6b6X-Mp5nQ'
 ]
 
-output_folder = 'Filmy_Z_Youtube/wilki'
+output_folder = 'Filmy_Z_Youtube/wilki_test'
 
 download_videos_from_list(urls_to_download, output_folder)
