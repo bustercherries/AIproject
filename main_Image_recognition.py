@@ -1,6 +1,7 @@
 import tensorflow as tf
 from matplotlib import pyplot as plt
 import os
+import numpy as np
 plt.rcParams['figure.figsize'] = [20, 10]
 
 # relative path to the project
@@ -9,11 +10,11 @@ project_path = os.path.dirname(os.path.abspath(__file__))
 all_dir = os.path.join(project_path, 'train_and_val')
 test_dir = os.path.join(project_path, 'Test dataset')
 
-resolution_y = 150
-resolution_x = 150
+resolution_y = 90
+resolution_x = 160
 our_batch_size = 32
 classes_no = 3
-epochs_no = 15
+epochs_no = 10
 continue_learning = 0 #if 1 it starts learning from previously trained model
 trained_model_filename = "models/animals_best_resnet_e15_res150.hdf5"
 
@@ -115,3 +116,50 @@ test_flow = test_datagen.flow_from_directory(
 )
 
 animals_model.evaluate(test_flow, steps = test_flow.n // test_flow.batch_size)
+
+
+#visualisation of guesses
+class_names = ['boars', 'deers', 'wolves']
+
+
+def plot_value_img(i, predictions, true_labels, images, file_names, class_names):
+    prediction, true_label, img = predictions[i], true_labels[i], images[i]
+    predicted_label = np.argmax(prediction)
+    true_value = np.argmax(true_label)
+
+    plt.figure(figsize=(12, 5))
+
+    plt.subplot(1, 2, 1)
+
+    plt.yticks(np.arange(len(class_names)), class_names)
+    thisplot = plt.barh(range(len(class_names)), prediction, color="gray")
+    thisplot[predicted_label].set_color('r')
+    thisplot[true_value].set_color('g')
+
+    plt.subplot(1, 2, 2)
+
+    plt.imshow(img)
+    plt.xticks([])
+    plt.yticks([])
+    plt.grid(False)
+    if predicted_label == true_value:
+        color = 'green'
+    else:
+        color = 'red'
+
+    plt.xlabel("{} {:2.0f}% ({})".format(class_names[predicted_label],
+                                         100 * np.max(prediction),
+                                         class_names[true_value]),
+               color=color)
+
+    # Dodanie nazwy pliku obok obrazka
+    plt.title("File Name: {}".format(file_names[i]))
+    plt.show()
+
+
+# Predykcje dla danych testowych
+y_test_pred = animals_model.predict(test_flow)
+
+# Wizualizacja dla pierwszego przykładu ze zbioru walidacyjnego
+for i in range(10):
+    plot_value_img(i, y_test_pred, test_flow.labels, test_flow[i][0], test_flow.filenames, class_names)
