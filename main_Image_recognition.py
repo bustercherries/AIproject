@@ -10,13 +10,13 @@ project_path = os.path.dirname(os.path.abspath(__file__))
 all_dir = os.path.join(project_path, 'train_and_val')
 test_dir = os.path.join(project_path, 'Test dataset')
 
-resolution_y = 90
-resolution_x = 160
+resolution_y = 300
+resolution_x = 300
 our_batch_size = 32
 classes_no = 3
-epochs_no = 10
+epochs_no = 15
 continue_learning = 0 #if 1 it starts learning from previously trained model
-trained_model_filename = "models/animals_best_resnet_e15_res150.hdf5"
+trained_model_filename = "models/animals_test_resnet300x300.hdf5"
 
 
 #splitting the data to train and validation
@@ -31,7 +31,8 @@ train_flow = train_datagen.flow_from_directory(
   color_mode = "rgb", # Images are in color
   target_size = (resolution_y, resolution_x), # Scale all images to given resolution
   batch_size = our_batch_size, # Batch size
-  class_mode = "categorical" # Classification task
+  class_mode = "categorical", # Classification task
+  subset='training'
 )
 
 validation_flow = train_datagen.flow_from_directory(
@@ -39,7 +40,8 @@ validation_flow = train_datagen.flow_from_directory(
   color_mode = "rgb",
   target_size = (resolution_y, resolution_x),
   batch_size = our_batch_size,
-  class_mode = "categorical"
+  class_mode = "categorical",
+  subset='validation'
 )
 
 """#vgg16
@@ -55,12 +57,9 @@ conv_base = tf.keras.applications.ResNet50(
   input_shape = (resolution_y, resolution_x, classes_no) # Same shape as in our generators
 )
 
-conv_base.summary()
-
 for l in range(1, 7):
     conv_base.layers[l].trainable = False
 conv_base.summary()
-
 
 inputs = tf.keras.Input(shape=(resolution_y, resolution_x, 3))
 outputs = conv_base(inputs, training=False)
@@ -77,7 +76,6 @@ animals_model.compile(
 
 animals_model.summary()
 
-
 if continue_learning == 1:
     animals_model = tf.keras.models.load_model(trained_model_filename)
 
@@ -90,9 +88,8 @@ history = animals_model.fit(
         epochs= epochs_no,
         validation_data=validation_flow,
         validation_steps=validation_steps,
-        callbacks = [tf.keras.callbacks.EarlyStopping(monitor='accuracy', patience=5),
-             tf.keras.callbacks.ModelCheckpoint(filepath= trained_model_filename,
-                                                monitor="accuracy", save_best_only=True)])
+        callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_accuracy', patience=5, restore_best_weights=True),
+             tf.keras.callbacks.ModelCheckpoint(filepath=trained_model_filename, monitor="val_accuracy", save_best_only=True)])
 
 
 plt.plot(history.history['accuracy'])
