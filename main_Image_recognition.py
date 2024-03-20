@@ -14,8 +14,8 @@ resolution_y = 300
 resolution_x = 300
 our_batch_size = 32
 classes_no = 3
-epochs_no = 15
-continue_learning = 0 #if 1 it starts learning from previously trained model
+epochs_no = 10
+continue_learning = 1 #if 1 it starts learning from previously trained model
 trained_model_filename = "models/animals_test_resnet300x300.hdf5"
 
 
@@ -100,6 +100,7 @@ plt.xlabel('epoch')
 plt.legend(['train', 'val'], loc='upper left')
 plt.show()
 
+
 test_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
     rescale = 1 / 255
 )
@@ -109,20 +110,22 @@ test_flow = test_datagen.flow_from_directory(
   color_mode = "rgb", # Images are in color
   target_size = (resolution_y, resolution_x), # Scale all images to 150x150
   batch_size = our_batch_size, # Batch size
-  class_mode = "categorical" # Classification task
+  class_mode = "categorical", # Classification task
+  shuffle = False
 )
-
-animals_model.evaluate(test_flow, steps = test_flow.n // test_flow.batch_size)
+print (test_flow.class_indices)
+print (test_flow.filenames)
+#animals_model.evaluate(test_flow, steps = 20)#test_flow.n // test_flow.batch_size)
 
 
 #visualisation of guesses
-class_names = ['boars', 'deers', 'wolves']
+class_names = list(test_flow.class_indices.keys())
 
 
 def plot_value_img(i, predictions, true_labels, images, file_names, class_names):
-    prediction, true_label, img = predictions[i], true_labels[i], images[i]
+    prediction, true_label, img = predictions[i], true_labels[i], images[0]
     predicted_label = np.argmax(prediction)
-    true_value = np.argmax(true_label)
+    true_value = true_label
 
     plt.figure(figsize=(12, 5))
 
@@ -157,6 +160,6 @@ def plot_value_img(i, predictions, true_labels, images, file_names, class_names)
 # Predykcje dla danych testowych
 y_test_pred = animals_model.predict(test_flow)
 
-# Wizualizacja dla pierwszego przykładu ze zbioru walidacyjnego
-for i in range(10):
+# Wizualizacja dla pierwszych przykładów ze zbioru walidacyjnego
+for i in range(12):
     plot_value_img(i, y_test_pred, test_flow.labels, test_flow[i][0], test_flow.filenames, class_names)
